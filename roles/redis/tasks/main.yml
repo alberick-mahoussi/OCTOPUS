@@ -1,0 +1,28 @@
+---
+- name: Install Redis
+  apt:
+    name: redis-server
+    update_cache: yes
+  become: true
+
+- name: Copier le fichier de configuration Redis
+  template:
+    src: redis.conf.j2
+    dest: /etc/redis/redis.conf
+    mode: 0644
+  become: true
+
+- name: Copy redis conf in vm
+  copy:
+    src: roles/redis/files/redis.service
+    dest: /etc/systemd/system/redis.service
+  become: true
+
+- name: Restart Redis service
+  service:
+    name: redis-server
+    state: restarted
+    enabled: yes
+  become: true
+  when: ansible_check_mode or (ansible_service_mgr | default(''))
+

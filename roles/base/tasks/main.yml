@@ -1,0 +1,15 @@
+- name: Install required dependencies
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: no
+  with_items:
+    - apt-transport-https
+    - ca-certificates
+    - emacs-nox
+    - git
+    - curl
+    - unzip
+    - software-properties-common
+    - zsh
+    - gnupg    

@@ -1,0 +1,62 @@
+---
+- name: Get PostgreSQL GPG Key
+  apt_key:
+    url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+    state: present
+  become: true
+
+- name: Install psycopg2
+  apt:
+    name: python3-psycopg2
+    update_cache: yes
+  become: true
+
+- name: Add PostgreSQL12 repository
+  apt_repository:
+    repo: deb http://apt.postgresql.org/pub/repos/apt/ buster-pgdg main
+    update_cache: no
+    state: present
+  become: true
+
+
+- name: Install PostgreSQL12
+  apt:
+    name: postgresql-12
+    state: present
+    update_cache: yes
+  become: true
+
+- name: Ensure that postgresql is started
+  service:
+    name: postgresql
+    state: started
+
+- name: Create database
+  become: yes
+  become_user: postgres
+  become_method: sudo
+  postgresql_db:
+    name: "{{ postgresql_db }}"
+    state: present
+
+- name: Create user with limited privileges
+  become: yes
+  become_user: postgres
+  postgresql_user:
+    db: "{{ postgresql_db }}"
+    name: "{{ postgresql_user }}"
+    password: "{{ postgresql_password }}"
+    priv: ALL
+    state: present
+
+- name: Copy sql script
+  copy:
+    src: roles/postgresql/files/schema.sql
+    dest: /tmp/schema.sql
+
+- name: Create schema
+  become: true
+  become_user: postgres
+  postgresql_query:
+    db: "{{ postgresql_db }}"
+    path_to_script: /tmp/schema.sql

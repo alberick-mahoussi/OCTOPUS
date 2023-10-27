@@ -1,0 +1,44 @@
+- name: Copy local poll.tar to remote poll server
+  copy:
+    src: poll.tar
+    dest: /root/poll.tar
+  become: true
+
+- name: Extract poll.tar
+  unarchive:
+    src: /root/poll.tar
+    dest: /root
+    remote_src: yes
+  become: true
+
+- name: Install pip3
+  apt:
+    name: python3-pip
+    update_cache: yes
+  become: true
+
+- name: Install poll app dependencies
+  pip:
+    executable: pip3
+    requirements: /root/poll/requirements.txt
+  become: true
+
+- name: Copy poll.service to remote /etc/systemd/system/
+  copy:
+    src: roles/poll/files/poll.service
+    dest: /etc/systemd/system/poll.service
+  become: true
+
+- name: Add environment variable to poll.service
+  lineinfile:
+    path: /etc/systemd/system/poll.service
+    state: present
+    regexp: '^Environment'
+    line: Environment="REDIS_HOST={{ redis_host }}"
+  become: true
+
+- name: Make sure poll service is running
+  systemd:
+    name: poll
+    state: started
+  become: true
