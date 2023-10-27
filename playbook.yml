@@ -1,0 +1,40 @@
+- 
+  name: Install essential packages and configure instance
+  hosts: all
+  become: true
+  roles:
+   - base
+  
+-
+  name: Deploy redis database
+  hosts: cache-1
+  become: true
+  roles:
+    - redis
+
+-
+  name: Deploy poll service
+  hosts: web-1
+  environment:
+    REDIS_HOST: "{{ redis_host }}"
+  roles:
+    - poll
+
+-
+  name: Deploy postgres database
+  hosts: db-1
+  become: true
+  roles:
+    - postgresql
+
+- 
+  name: Deploy worker service
+  hosts: app-1
+  roles:
+    - worker
+
+-
+  name: Deploy result service
+  hosts: web-2
+  roles:
+    - result

@@ -1,0 +1,23 @@
+all:
+  children:
+    redis:
+      hosts:
+        cache-1:
+          ansible_host: 20.193.130.20
+    postgres:
+      hosts:
+        db-1:
+          ansible_host: 20.56.157.247
+    poll:
+      hosts:
+        web-1:
+          ansible_host: 20.83.178.239
+    result:
+      hosts:
+        web-2:
+          ansible_host: 102.37.216.208
+    worker:
+      hosts:
+        app-1:
+          ansible_host: 20.163.75.172
+
