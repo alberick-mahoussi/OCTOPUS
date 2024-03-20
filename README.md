@@ -11,6 +11,9 @@ The ultimate goal is to create stable and reliable environments for deploying ou
 # Prerequisites
 This project uses Ansible.
 
+# Required
+Please provide the ip address of your 5 configuration machine in product.yml file
+
 # Environment Variables
 To run this project, you will need to add the following environment variables to your environment.
 ANSIBLE_VAULT_PASSWORD_FILE Path to the file that contains the password.
